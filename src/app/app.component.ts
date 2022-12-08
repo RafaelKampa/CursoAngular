@@ -1,11 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, Inject, Injector, OnInit} from '@angular/core';
-import {Course} from './model/course';
-import {Observable} from 'rxjs';
-import {AppConfig, CONFIG_TOKEN} from './config';
+import {AfterViewInit, Component, ContentChild, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {COURSES} from '../db-data';
-import {CoursesService} from './courses/courses.service';
-import {createCustomElement} from '@angular/elements';
-import {CourseTitleComponent} from './course-title/course-title.component';
+import { CourseCardComponent } from './courses/course-card/course-card.component';
+import { CourseImageComponent } from './courses/course-image/course-image.component';
+import { Course } from './model/course';
 
 
 @Component({
@@ -13,39 +10,54 @@ import {CourseTitleComponent} from './course-title/course-title.component';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit, OnInit{
 
-    courses: Course[] = COURSES;
+    courses = COURSES;
 
-    coursesTotal = this.courses.length;
+    //ViewChild permite instanciar apenas um componente por vez, para instanciar uma Query de componentes é necessário usar a anotação ViewChildren
+    @ViewChild('cardRef', {read: ElementRef})
+    card: CourseCardComponent;
 
-    constructor(
-        private coursesService: CoursesService,
-        @Inject(CONFIG_TOKEN) private config: AppConfig,
-        private injector: Injector) {
+    @ViewChild('courseImage')
+    courseImage: ElementRef;
 
+    @ViewChildren(CourseCardComponent, {read: ElementRef})
+    cards: QueryList<Course>;
+
+    //ContentChild mostra somente o os dados do ng-content que foram declarados no componente app.html (neste caso o courseImage)
+    @ContentChild(CourseImageComponent, {read: ElementRef})
+    image: ElementRef;
+
+    startDate = new Date();
+
+    constructor() {
     }
 
-    ngOnInit() {
-
-        const htmlElement = createCustomElement(CourseTitleComponent, {injector:this.injector});
-
-        customElements.define('course-title', htmlElement);
-
+    //OnInit é carregado após o primeiro OnChanges, ou seja, é carregado após carregar todos os dados necessários
+    ngOnInit(): void {
+        console.log(this.image); 
     }
 
-    onEditCourse() {
-
-            this.courses[1].category = 'ADVANCED';
-
+    //AfterViewInit carrega antes do que o OnInit, mas as vezes pode carregar antes que todos os componentes tenham sido carregados
+    ngAfterViewInit(): void { 
+        console.log(this.cards);
+    }
+    
+    onCourseSelected(course:Course) {
+        console.log(this.card)
     }
 
-    save(course: Course) {
-        this.coursesService.saveCourse(course)
-            .subscribe(
-                () => console.log('Course Saved!')
-            );
+    onCoursesEdited() {
+        this.courses.push(
+            {
+                id: 11,
+                description: "New Course",
+                iconUrl: 'https://s3-us-west-1.amazonaws.com/angular-university/course-images/angular-core-in-depth-small.png',
+                longDescription: "Just a test for the query",
+                lessonsCount: 10,
+                category: 'ALL LEVELS'
+            }
+        )
     }
-
 
 }

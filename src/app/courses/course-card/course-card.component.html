@@ -1,44 +1,42 @@
-<div class="course-card" *ngIf="course" #container>
+<ng-container  *ngIf="course">
+  <div class="course-card" [ngClass]="cardClasses()">
 
-  <div class="course-title">
-
-      {{ cardIndex || '' + ' ' + course.description }}
-
-  </div>
-
-  <ng-content select="course-image"
-              *ngIf="course.iconUrl"></ng-content>
-
-  <div class="course-description">
-
-    Edit Title: <input #courseTitle [value]="course.description"
-                       (keyup)="onTitleChanged(courseTitle.value)">
-
-  </div>
-
-  <div class="course-category">
-
-    <div class="category" i18n>
-
-        {
-            course.category,
-            select,
-            BEGINNER {Beginner}
-            INTERMEDIATE {Intermediate}
-            ADVANCED {Advanced}
-        }
-
+    <div class="course-title" [ngStyle]="cardStyles()">
+        {{ cardIndex || '' + ' ' + course.description }}
     </div>
+    
+    <!--O ng-template pode substituir ou inserir dados dentro de outro ng-content por exemplo.
+    O código dentro do ng-template não é carregado a não ser que seja solicitado (nesse caso no else do ngif do ng-content da imagem).
+    O ng-template tem acesso as variáveis externas a ele, porém podem ser criadas variáveis locais e privadas dentro do ng-template que não podem ser utilizadas fora dele.
+    Para conferir o ng-template abaixo basta comentar o iconUrl no arquivo db-data.ts e ver o resultado na tela.
+    OBS: O ng-template é passado para o ng-component através do ID do template (no caso abaixo "blankImage")-->
+    <ng-template #blankImage>
+      <p [ngClass]="'warn'" >{{ course.description }} has no image.</p>
+      <img src="/assets/empty-image.png">
+    </ng-template>
 
+    <ng-template #noImage>
+      <ng-container *ngTemplateOutlet="nameTpl; context: {description:course.description}"></ng-container>
+    </ng-template>
+
+    <!-- Content Projection - busca o conteúdo dentro do componente declarado no app.html.
+      O termo "select" restringe o que deve ser mostrado no ng-content, vale lembrar que o nome da 
+      classe deve possuir o "." antes do nome da classe como se fosse uma classse css
+      Sem o termo "select" ele irá trazer tudo que estiver declarado no componente-->
+    <ng-content select="course-image" *ngIf="course.iconUrl; else noImage"></ng-content>
+    <ng-content select=".course-lessons"></ng-content>
+    <ng-content select=".course-description"></ng-content>
+
+    <ng-container [ngSwitch]="course.category">
+      <div class="course-category">
+        <div class="category" *ngSwitchCase="'BEGINNER'">Beginner</div>
+        <div class="category" *ngSwitchCase="'INTERMEDIATE'">Intermediate</div>
+        <div class="category" *ngSwitchCase="'ADVANCED'">Advanced</div>
+        <div class="category" *ngSwitchDefault>All Levels</div>
+      </div>
+    </ng-container>
+
+    <button (click)="onCourseViewed()">View Course</button>
 
   </div>
-
-  <button (click)="onSaveClicked(courseTitle.value)">Save Course</button>
-
-</div>
-
-
-
-
-
-
+</ng-container>

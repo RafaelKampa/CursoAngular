@@ -1,36 +1,40 @@
 <div class="top-menu">
-
-  <img class="logo"
-       src="https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png">
-
+  <img class="logo" src="https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png">
 </div>
 
-<div>
-
-  <div class="demo">
-
-
-      <button (click)="onEditCourse()" i18n>Edit Course</button>
-
-  </div>
-
-  <div class="courses">
-
-    <course-card *ngFor="let course of  courses  "
-                 (courseChanged)="save($event)"
-                 type="beginner"
-                 [course]="course">
-
-      <course-image [src]="course.iconUrl"></course-image>
-
-    </course-card>
-
-
-  </div>
-
-
+<div [ngStyle]="{'margin-left': 'auto', 'margin-right': 'auto', 'width': '131px'}">
+  <button (click)="onCoursesEdited()">Edit Courses</button>
 </div>
 
+<div class="demo">
+  <div [ngStyle]="{'text-align':'center', 'font-weight': 'bold'}">Data: {{ startDate | date: 'dd/MM/yyyy' }}</div>
+  <div [ngStyle]="{'text-align':'center', 'font-weight': 'bold'}">Hora: {{ startDate | date: 'HH:mm' }}</div>
+</div>
+
+<div class="courses" *ngFor="let course of courses">
+
+  <!--Para declarar uma variável local dentro do ng-template, usar a sintaxe abaixo (let-variavel)-->
+  <ng-template #courseNameNg let-courseName="description">
+    <p [ngClass]="'warn'" >{{ courseName }} has no image.</p>
+    <img src="/assets/empty-image.png">
+  </ng-template>
+
+  <!--A Div abaixo instancia o ng-template com variáveis locais-->
+  <!-- <div *ngTemplateOutlet="courseNameNg; context: {description: course.description}">
+  </div> -->
 
 
+  <!--O que for colocado entre a tag inicial e final do componente é mostrado no ng-content do
+      course-card.html-->
+  <course-card (courseSelected)="onCourseSelected($event)" 
+      [course]="course" [nameTpl]="courseNameNg">
+    <course-image [src]="course.iconUrl"></course-image>
+    <div class="course-lessons">
+      <h5>Total lessons: {{ course.lessonsCount }}</h5>
+    </div>
+    <div class="course-description">
+      {{ course.longDescription }}
+    </div>
+  </course-card>
 
+</div>
