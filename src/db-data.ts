@@ -5,10 +5,9 @@ export const COURSES: any = [
     {
         id: 1,
         description: "Angular Core Deep Dive",
-        // iconUrl: 'https://s3-us-west-1.amazonaws.com/angular-university/course-images/angular-core-in-depth-small.png',
+        iconUrl: 'https://s3-us-west-1.amazonaws.com/angular-university/course-images/angular-core-in-depth-small.png',
         longDescription: "A detailed walk-through of the most important part of Angular - the Core and Common modules",
-        lessonsCount: 10,
-        category: 'INTERMEDIATE'
+        lessonsCount: 10
     },
     {
         id: 2,
@@ -84,5 +83,5 @@ export const COURSES: any = [
 
 
 export function findCourseById(courseId:number) {
-    return COURSES.find(course => course.id == courseId);
+    return COURSES.find(course => course.id === courseId);
 }
