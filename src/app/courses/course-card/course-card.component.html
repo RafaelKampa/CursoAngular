@@ -9,7 +9,7 @@
     O código dentro do ng-template não é carregado a não ser que seja solicitado (nesse caso no else do ngif do ng-content da imagem).
     O ng-template tem acesso as variáveis externas a ele, porém podem ser criadas variáveis locais e privadas dentro do ng-template que não podem ser utilizadas fora dele.
     Para conferir o ng-template abaixo basta comentar o iconUrl no arquivo db-data.ts e ver o resultado na tela.
-    OBS: O ng-template é passado para o ng-component através do ID do template (no caso abaixo "blankImage")-->
+    OBS: O ng-template é passado para o ng-component através do ID do template (no caso abaixo "blankImage").-->
     <ng-template #blankImage>
       <p [ngClass]="'warn'" >{{ course.description }} has no image.</p>
       <img src="/assets/empty-image.png">
