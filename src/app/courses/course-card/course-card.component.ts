@@ -1,17 +1,7 @@
 import {
-    AfterContentChecked, AfterContentInit, AfterViewChecked, AfterViewInit,
-    Attribute,
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component, DoCheck,
-    EventEmitter,
-    Input, OnChanges,
-    OnDestroy,
-    OnInit,
-    Output
+    Component, EventEmitter, Input, OnInit, Output, TemplateRef
 } from '@angular/core';
-import {Course} from '../../model/course';
-import {CoursesService} from '../courses.service';
+import { Course } from 'src/app/model/course';
 
 
 
@@ -28,37 +18,42 @@ export class CourseCardComponent implements  OnInit {
     @Input()
     cardIndex: number;
 
-    @Output('courseChanged')
-    courseEmitter = new EventEmitter<Course>();
+    @Input()
+    nameTpl: TemplateRef<any>;
 
+    @Output('courseSelected')
+    courseEmitter = new EventEmitter<Course>;
 
-
-
-    constructor(private coursesService: CoursesService,
-                @Attribute('type') private type: string) {
-
-
+    constructor() {
     }
 
     ngOnInit() {
-
-
     }
 
-
-
-    onTitleChanged(newTitle: string) {
-
-        this.course.description = newTitle;
-
+    onCourseViewed() {
+        console.log("card component - button clicked ...");
+        this.courseEmitter.emit(this.course);
     }
 
-
-    onSaveClicked(description: string) {
-
-        this.courseEmitter.emit({...this.course, description});
-
+    isImageVisible() {
+        return this.course && this.course.iconUrl;
     }
 
+    cardClasses() {
+        if (this.course.category == 'BEGINNER') {
+            return 'beginner';
+        } else if (this.course.category == 'INTERMEDIATE') {
+            return 'intermediate';
+        } else if (this.course.category == 'ADVANCED') {
+            return 'advanced';
+        } else {
+            return '';
+        }
+    }
 
+    cardStyles() {
+        return {
+            'text-decoration':'underline',
+        };
+    }
 }
