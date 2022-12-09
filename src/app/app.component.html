@@ -1,4 +1,4 @@
-<div class="top-menu">
+<div highlighted class="top-menu">
 
     <img class="logo"
          src="https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png">
@@ -6,22 +6,22 @@
 </div>
 
 
+<ng-template [ngIf]="courses[0]" let-course>
+    <div class="courses">
 
-<div class="courses" *ngIf="courses[0] as course">
+        <!--O termo "highlighted" é uma diretiva criada através do comando: "ng g directive directives/highlighted"
+        Ele cria uma diretiva que pode ser usada em todo o projeto e pode receber um estilo próprio no arquivo styles.css
+        Verificar o arquivo "directives/highlighted.ts" para ver como funciona a sua implementação-->
+        <course-card highlighted #highlighter="hl"
+                (toggleHighlighted)="onToggle($event)"
+                (courseSelected)="onCourseSelected($event)"
+                    [course]="course">
+            <course-image [src]="course.iconUrl" *ngxUnless="!course.iconUrl"></course-image>
 
-    <course-card
-            (courseSelected)="onCourseSelected($event)"
-                 [course]="course">
-
-        <course-image [src]="course.iconUrl"></course-image>
-
-        <div class="course-description">
-            {{ course.longDescription }}
-        </div>
-
-    </course-card>
-
-
-</div>
-
+            <div class="course-description" (dblclick)="highlighter.toggle()">
+                {{ course.longDescription }}
+            </div>
+        </course-card>
+    </div>
+</ng-template>
 
